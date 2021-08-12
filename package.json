@@ -1,0 +1,25 @@
+{
+  "name": "TypeScript-test-repo",
+  "version": "1.0.0",
+  "description": "공식 문서에서 TypeScript는 타입이란 개념을을 추가해서 자바스크립트를 확장하며 타입을 통해 코드를 실행하기 전에 에러를 잡을 수 있어 에러를 잡는데 사용되는 시간을 줄여주고 , 어떤 브라우저나 OS , 자바스크립트 실행환경에서도 실행된다고 써 있다",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stau0444/TypeScript-test-repo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stau0444/TypeScript-test-repo/issues"
+  },
+  "homepage": "https://github.com/stau0444/TypeScript-test-repo#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
+}
