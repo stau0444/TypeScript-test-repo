@@ -1100,24 +1100,31 @@ rootDir : 프로젝트 루트 경로 설정(루트 경로에 있는 것들이 �
 -strict를 true로 켜야함다
  
     strict의 옵션들
-    --noImplicitAny     
+
+    /--noImplicitAny/     
     명시적이지 않게 any 타입을 사용하여 , 표현식과 선언에 사용하면 에러를 발생시킨다.   
     타입 스크립트가 추론을 실패한 경우 ,any를 지정하는데 이때 any가 맞다면 any를 명시하도록 강제한다.   
-    --noImplicitThis   
+    
+    /--noImplicitThis/   
     명시적이지 않게 any 타입을 사용하여 ,this 표현식에 사용하면 ,에어를 발생시킨다.
-    --strictNullChecks   
+    
+    /--strictNullChecks/   
     모든 타입에 null ,undefind 를 subtype에서 제외 시킨다.   
     만약 들어오는 타입이 null이나 undefind일 수 있다면    
     union타입으로 받아서 null에 대한 예외를 터뜨리는 방식으로 안전하게    
     작성하는 것이 좋다 이를 타입 가드라고도 한다.   
-    --strictFunctionTypes    
+    
+    /--strictFunctionTypes/    
     //todo 공변 ,반공변 공부 좀더 필요    
-    --strictPropertyInitialization   
+    
+    /--strictPropertyInitialization/
     정의도지 않은 클래스의 속성이 생성자에서 초기화되어있는지 확인한다.    
     --strictNullChecks 를 함께 사용해야한다.   
-    --strictBindCallApply    
+    
+    /--strictBindCallApply/    
     bind , call , apply에 대해 더 엄격한 검사를 수행시킨다    
-    --alwaysStrict
+    
+    /--alwaysStrict/
     각 소스 파일에 대해 javascript 의 strict mode 로 코드를 분석하고 ,   "use strict"를 해제한다 
 
 
