@@ -97,8 +97,8 @@ console.log(obj[sym])
 
  //let name : string = null;
  //tsconfing의 "strict"는 --strictNullChecks를 포함한다.
- let str : string = null;
- let num : number = undefined;
+ //let str : string = null;
+ //let num : number = undefined;
 
  //void는 타입으로만 존재하기 때문에 값으로는 사용할 수 없다 
  //void에는 undefined만 넣을 수 있다 
@@ -107,7 +107,7 @@ console.log(obj[sym])
 
 
  //--strictNullChecks가 true 라면 아래 코드를 사용할 수 없다 .
- let union: string = null;
+ //let union: string = null;
 
  //위의 경우 union type을 사용한다 
  //string과 null 모두 넣을 수 있다.
@@ -139,39 +139,3 @@ console.log(obj[sym])
  console.log(typeof u1)
 
 
- //----------object----------
-/*
-    1.primitive type이 아닌것 을 나타내고 싶을때 사용한다 
-    2.
-*/
-
-//타입스크립트에서 person1 은 Object타입이 아니다
-//person1 은 {name : 'ugo' , age:400}
-//타입이고 이를 오브젝트 리터럴 타입이라한다.
- const person1: = {name : 'ugo' , age:400}
-
- const person2 = Object.create({
-     name:'ugo',
-     age:400
- })
-
- console.log(typeof person1)
- console.log(typeof person2)
-
-
-
-//----------Array----------
-/*
-    1.array는 객체이다 
-    2.array는 공통의 타입으로 모아진 데이터 집합이다
-    
-*/
-
-//배열 타입 표현1
-let list: number[] = [1, 2, 3,4];
-
-//유니언타입으로 표현
-let list2: (number|string)[] = [1, 2, 3,"4"];
-
-//배열 타입 표현2 :jsx tsx 에서 충돌위험이 있다는 얘기가 잇다.
-let list3: Array<number> = [1, 2, 3];

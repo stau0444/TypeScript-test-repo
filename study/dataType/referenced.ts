@@ -7,14 +7,14 @@
 //타입스크립트에서 person1 은 Object타입이 아니다
 //person1 은 {name : 'ugo' , age:400}
 //타입이고 이를 오브젝트 리터럴 타입이라한다.
-const person1: = {name : 'ugo' , age:400}
+//const person1: = {name : 'ugo' , age:400}
 
 const person2 = Object.create({
     name:'ugo',
     age:400
 })
 
-console.log(typeof person1)
+//console.log(typeof person1)
 console.log(typeof person2)
 
 
@@ -112,4 +112,108 @@ function leakingAny2(obj:any){
 const c2 = leakingAny2({num:0});
 
 
-//----------ㅕㅜ----------
+//----------Unknwon----------
+
+/*
+    1.응용 프로그램을 작성할 때 동적 컨텐츠 같이 모르는 
+      변수의 타입을 묘사해야할 때가있다 .
+    2.이 경우 , 컴파일러와 미래의 코드를 읽는 사람에게 이변수가 
+      무엇이든 될 수 있음을 알려주는 unknown 타입을 사용한다.
+    3.any 보다 Type-safe 한 타입이다 . 
+    4.타입을 확정해 주지 않으면 다른 곳에 할당 할 수 없고 , 사용할 수 없다. 
+    5.runtime error 를 줄일 수 있다 . 
+*/
+
+declare const maybe : unknown;
+
+//unknown은 number 에 바로 할당 할 수 없다 .
+//type gaurd
+
+if(typeof maybe === 'number'){
+    const aNumber :number = maybe;
+}
+
+if(maybe === true){
+    const aBoolean:boolean = maybe;
+}
+
+if(typeof maybe === 'string'){
+    const aString:string = maybe;
+}
+
+
+//----------never----------
+
+/*
+    1.리턴에 사용되는 타입이다
+    2.never는 모든타입의 subtype 이다 , 모든타입에 할당 가능 
+    3.never 에는 그 어떤 것도 할당할 수 없다 .
+    4.any 도 never 에 할당할 수 없다 . 
+    5.잘못된 타입을 넣는 실수를 막고자 할 때 사용하기도 한다.
+*/
+
+//throw 되어 어떤 형태도 리턴하지 않기 때문에 리턴타입을 never로 사용한다.
+function error(message:string):never{
+    throw new Error(message);
+}
+
+//never 라고 타입추론된다
+function fail() {
+    return error("failed");
+}
+
+function infiniteLoop():never {
+    while(true){
+
+    }
+}
+
+let nev:string = "ugo";
+
+// if(typeof a !== 'string'){
+//     a;
+// } 
+
+//----------void----------
+
+/*
+    1.리턴되는 것이 없을때 사용한다 .
+    2. void는 리턴되는 것의 사용을 막는다 
+*/
+
+//리턴되는 것이 없기 떄문에 void 로 리턴타입이 추론된다.
+function returnVoid(message:string) {
+    console.log(message);
+}
+
+function returnUndefined(message:string):undefined {
+    console.log(message);
+    return undefined;
+}
+
+//void는 리턴타입으로 정말 아무것도 안할때 사용된다.
+const vo = returnVoid('void');
+const und = returnUndefined("hello");
+// //error
+// if(typeof vo === 'void'){
+
+// }
+
+if(typeof und === 'undefined'){
+
+}
+
+
+function f4(a:number){
+    if(a>0){
+        return a * 38;
+    }
+}
+
+console.log(f4(5)) // 190
+//console.log(f4(-5)+5) //NaN
+
+
+
+
+
