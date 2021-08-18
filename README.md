@@ -1139,3 +1139,525 @@ rootDir : 프로젝트 루트 경로 설정(루트 경로에 있는 것들이 �
     "markdownDescription": "Enable all strict type checking options.\n\nSee more: https://www.typescriptlang.org/tsconfig#strict"
 },
 ```
+
+
+#
+## Interface
+#
+
+>내부적인 동작은 숨겨져 있고 외부적으로 드러 나는 객체의 사용 방식이 적혀있는 타입
+
+```ts
+
+function hello1(person:{name:string , age:number}) :void{
+    console.log('hi im',`${person.name}`)
+}
+
+const p1 : {name : string  , age:number} = {
+    name:'ugo',
+    age:400
+};
+
+hello1(p1)
+
+//위와 같은 코드에서 타입을 정의하는 
+//{name:string , age:number}가 계속 사용되고 있다. 
+//이를 인터페이스로 만들면 아래와 같다.
+
+
+interface Person1{
+    name: string;
+    age: number;
+}
+
+function hello1(person:Person1) :void{
+    console.log('hi im',`${person.name}`)
+}
+
+const p1 : Person1 = {
+    name:'ugo',
+    age:400
+};
+
+hello1(p1)  
+
+//인터페이스는 ts에서만 사용된다 .
+//즉 컴파일 타임에만 사용된다. 
+//js에는 인터페이스가 없기 떄문에
+//컴파일된 js 파일에는 아래와 같이 코드가 컴파일된다.
+
+"use strict";
+function hello1(person) {
+    console.log('hi im', "" + person.name);
+}
+var p1 = {
+    name: 'ugo',
+    age: 400
+};
+hello1(p1);
+
+```
+
+#
+### Optional property
+#
+
+optioal property 선언 두가지 방식
+>1.필드 이름 끝에 '?'를 붙혀 특정 필드를 Optional하게 선언할 수 있다 .   
+2.인덱서블 타입을 사용하여 필드 선언
+
+```ts
+//1.?표 사용 선언
+interface Person2{
+    name: string;
+    age?: number;
+}
+
+function hello2(person:Person2):void {
+    console.log(`${person.name}`)
+}
+
+//age 는 optional 로 선언되어있기 때문에 있어도 되고 없어도 된다 
+hello2({name:'ugo',age:45});
+hello2({name:'ugo'});   
+
+//2.indexable type 사용
+
+//아래 인터페이스는
+//name 은 required(필수)이며
+//age는 optional
+//그외에 어떤이름의 필드가 와도 괜찮다는 의미이다
+interface Person2{
+    name: string;
+    age?: number;
+    //아래와 같은 것을 indexable type이라고 한다 
+    [index: string]:any;
+}
+
+function hello2(person:Person2):void {
+    console.log(`${person.name}`)
+}
+
+
+hello2({name:'ugo',age:45, male:"man"});
+hello2({name:'ugo',age:45});
+hello2({name:'ugo'});
+```
+
+#
+### interface 에 함수 정의
+#
+
+```ts
+interface Person4{
+    name:string;
+    age:number;
+    hello():void;
+}
+
+//인터페이스에 함수를 정의할 수 있는 두가지 방식
+
+//1
+const p41:Person4={
+    name:'ugo',
+    age:40,
+    hello :function():void{
+        console.log(`hi im ${this.name}`)
+    }
+}
+
+//2
+const p42:Person4={
+    name:'ugo',
+    age:40,
+    //타입스크립트에서는 함수의 첫번째인자로 this를 지정할 수 있다.
+    hello (this:Person4):void{
+        console.log(`hi im ${this.name}`)
+    }
+}
+
+// const p43:Person4={
+//     name:'ugo',
+//     age:40,
+//     //화살표 함수일때는 this가 블록안에 없으면 
+//     //global this를 가리키기 때문에 사용할 수 없다.
+//     hello(this:Person4) : void => {
+//         console.log(`hi im ${this.name}`)
+//     }
+// }
+
+p41.hello();
+p42.hello();
+```
+
+#
+### 인터페이스의 구현 클래스
+#
+
+```ts
+interface IPerson{
+    name: string;
+    age?: number;
+    hello() :void;
+}
+
+class Person implements IPerson{
+    name: string;
+    age?: number | undefined;
+
+    constructor(name:string){
+        this.name = name;
+    }
+
+    hello(): void {
+        console.log(`${this.name} 입니다`)
+    }
+    
+}
+
+//타입을 인터페이스 타입으로 받는 것이 정확한 표현이다.
+const person:IPerson = new Person('ugo');
+person.hello();
+```
+
+>위의 코드에서 Person은 IPerson을 구현하고 있다 . 
+Ide에 인터페이스 구현시 편하게 해당 인터페이스에 필요한 멤버들을 자동 작성해주는 기능이 있다. 
+
+
+#
+### interface 간의 상속
+#
+
+```ts
+//Ugo는 IPerson2를 상속받고 있다
+
+interface IPerson2{
+    name:string;
+    age?:number;
+}
+
+interface Ugo extends IPerson2{
+    city:string;
+}
+
+const ugo:Ugo = {
+    name:'ugo',
+    age:4,
+    city:'korea'
+}
+```
+#
+### function interface
+#
+
+>함수를 인터페이스로 만들어내는 방식이다 함수를 타입으로 사용할 수 있다.
+
+```ts
+interface HelloPerson{
+    (name:string, age?:number):void;
+}
+//helloPerson 은 HelloPerson 타입이고 HelloPerson에 정의된 대로 구현해야한다.
+const helloPerson : HelloPerson = function(name:string) {
+    console.log(`${name}`)
+}
+//helloPerson을 실행 시킬때 변수의 타입을 따르지
+//구현체의 형태를 따르지 않는다. 
+//구현체에서는 인터페이스의 구격에 벗어나지 않는한에서 변형이 가능하다.
+helloPerson("ugo");
+```
+
+#
+### readonly property
+#
+
+>컴파일 타임에 문제를 잡아내 코드를 제대로 작성하는 것이 목적이다   
+한번 할당되고 변경될 일이 없는 필드라면 readonly로 선언하는 것이 좋다 .
+```ts
+interface Person8{
+    name:string;
+    age?:number;
+    readonly gender: string
+}
+
+const p81 : Person8 = {
+    name:'ugo',
+    gender:'male'
+}
+
+//readonly로 선언되어 있어 변경할 수 없다. 
+p81.gender = 'female';
+```
+
+#
+### type alias 와 interface 비교
+#
+
+``` ts
+
+//1.함수 선언시 차이
+
+//type alias 
+type Eat = (food:string) => void;
+//interface
+interface Eat{
+    (food:string):void;
+}
+
+//2.array 선언시 차이
+//type alias 
+type PersonList = string[];
+//interface
+interface PersonList {
+    [index: number] :string;
+}
+
+//3.intersection
+
+interface ErrorHandling {
+    success:boolean;
+    error?:{message:string};
+}
+
+interface ArtistsData{
+    artistas:{name:string}[];
+}
+
+// type alias
+//& 기호로 여러개 티입을 합칠 수 있다.
+type ArtistsResponseType = ArtistData & ErrorHandling;
+
+//interface
+//다중 상속으로 intersection을 구현할 수 있다.
+interface IArtistsResponse extends ArtistsData , ErrorHandling{}
+
+let art: artistsResponsetype;
+let iar:IArtistsResponse ;
+
+//4.union type 표현
+
+interface Bird{
+    fly():void;
+    layEggs():void;
+}
+
+interface Fish{
+    swim():void;
+    layEggs():void;
+}
+
+// type alias
+
+type PetType = Bird | Fish;
+
+//interface
+//유니언 타입을 상속받거나 구현할 수 없다 . 
+interfate IPet extends PetType{} //error
+clsss Pet implements PetType{}   //error
+
+```
+
+
+#
+### Declaration Merging
+#
+
+>인터페이스에 있는 기능이다 . 이름이 같은 인터페이스는 컴파일시에 하나로 합쳐진다.
+
+
+```ts
+interface Person{
+    name:string;
+    age:number;
+}
+interface Person{
+    gender:string
+}
+
+
+
+let ugo:Person;
+
+//아래처럼 참조가 가능하다.
+ugo.name
+ugo.age
+ugo.gender
+```
+
+
+#
+## Class
+#
+
+
+>클래스의 특징   
+1.class는 object를 만드는 청사진이다.   
+2.class 키워드로 클래스를 만들 수 있다.    
+3.Javascript 에서도 class 를 es6부터 지원하나  접근제어자등 몇가지 개념이 부족하다    
+4.클래스는 OOP를 구현하기 위한 기본적인 개념이다 .   
+5.TypeScript에서는 클래스도 하나의 타입이 된다.   
+6.class 이름은 보통 대문자로 시작한다   
+7.constructor 를 이용해서 object 를 생성하면서 값을 전달할 수 있다 .   
+8.this 키워드를 이용해서 만들어진 object 자기 자신을 가리킬 수 있다 .   
+9.js로 컴파일 되면 es6 이하 버전에서는 function으로 표현된다.   
+
+
+
+#
+### constructor(생성자)와 initialize(초기화)
+#
+ 
+>1.생성자 함수가 없으면 디폴트 생성자라고 부른다.   
+ 2.프로그래머가 만든 생성자가 하나라도 있으면 ,디폴트 생성자는 사라진다.   
+ 3.strict 모드에서는 프로퍼티를 선언하는 곳 또는 생성자에서 값을 할당해 줘야한다.    
+ 4.프로퍼티를 선언하는 곳 또는 생성자에서 값을 할당하지 않는 경우에는 !를 붙여서 위험을 표현한다 .   
+ 5.클래스의 프로퍼티가 정의되어 있지만 ,값을 대입하지 않으면 런타임에 undefined가 할당된다.   
+ 6.생성자에는 async를 설정할 수 없다 . 
+
+
+ #
+ ### 접근제어자(Access Modifiers)2
+ #
+
+ > 1.접근 제어자에는 public , private , protected가 있다 .   
+ 2.설정을 하지 않으면 public이다 .     
+ 3.클래스 내부의 모든 곳에 (생성자 , 프로퍼티 ,메서드 ) 설정 가능하다 .     
+ 4.private로 설정하면 클래스 외부에서 접근할 수 없다 .   
+ 5.자바 스크립트에서 private를 지원하지 않아 오래동안 프로퍼티나 메서드 이름 앞에 _를 붙여서 표현했다.  
+
+
+ #
+ ### 생성자에서 초기화
+ #
+
+ ```ts
+class Person{
+    name:string ; 
+    age:number;
+    public constructor(name:string , age:number){
+        this.name = name ;
+        this.age = age ;
+    }
+}
+
+//위의 생성자 코드를 아래처럼 간단하게 쓸수 있다 . 
+//생성자 파라미터에 접근제어자를 달면 그 자체가 클래스의 필드로 사용된다.
+
+class Person{
+    public constructor(public name:string , pubilc age:number){}
+}
+ ```
+
+
+#
+### Getter 와 Setter 
+#
+
+>필드에 간접적으로 접근하도록 getter(값을 가져오는 메서드),setter(값을 set하는 메서드)를 사용한다. get , set 키워드로 getter, setter 메서드를 생성할 수 있다 .
+
+```ts
+class Person7{
+    public constructor(private _name:string , public age:number){}
+    get name(){
+        console.log('getter');
+        return this._name
+    }
+    //setter가 없으면 readOnly가 된다.
+    set name(n:string){
+        console.log('setter')
+        this._name = n;
+    }
+}
+
+//getter와 setter를 이용해 간접적으로 값을 가져오거나 셋팅한다
+const per : Person7 = new Person7("ugo",40);
+
+//get name()이 블러와 진다.
+console.log(per.name)
+//set name()이 불러와 진다.
+per.name = '40';
+console.log(per.name)
+```
+
+#
+### class 프로퍼티의  readOnly
+#
+
+> 클래스의 프로퍼티에 readOnly 키워드를 사용하여 생성시점 이외에는 수정할 수   
+없도록 할 수 있다.
+
+``` ts
+class Person8{
+    public readonly name:string = 'ugo';
+    
+    constructor(){
+        this.name = 'hallo';
+    }
+
+    //클래스 생성시점 이외에서는 readonly 프로퍼티를 수정할 수 없다.
+    public hi(){
+        this.name = 'asd';
+    }
+}
+```
+
+#
+### class에서의 index Signature 
+#
+
+>필드가 동적으로 추가되야할 경우  클래스에서 index Signature를 사용할 수 있다.
+
+```ts
+class Person9{
+    [index:string] :"male"|"female";
+}
+
+const per1 = new Person9();
+per1.ugo="male";
+per1.uga="female";
+per1.toto="male";
+//클래스에 index Signature로 정의해 놓은 union 타입에 
+//해당하지 않기 때문에 에러가 난다.
+per1.yang="남자";
+
+console.log(per1);
+```
+
+#
+### static 프로퍼티와 , 메서드
+#
+
+>클래스를 통해 만들어진 인스턴스에서 공유되는 프로퍼티 혹은 메서드를 static 키워드를   붙혀 만들 수 있다 
+
+
+```ts
+//static 사용 예시
+
+class Person10{
+    public static  NAME = "ugo";
+    public static hello(){console.log(`hello ${Person10.NAME}`)}
+
+    public changeName(name:string){
+        Person10.NAME = name;
+    }
+    get name(){
+        return Person10.name ;
+    }
+}
+
+const p10:Person10 = new Person10();
+
+const p11:Person10 = new Person10();
+
+//static 필드 혹은 메서드는 해당 클래스로 만들어진 모든 인스턴스에서 공유된다
+//인스턴스가 담긴 변수로 참조하는 것이 아니라 
+//클래스 자체로 참조한다
+//X
+//p10.hello();
+//O
+Person10.hello();
+p11.changeName("ulala")
+//Person.NAME은 인스턴스 끼리 공유되기 떄문에
+//ulala가 출력된다.
+Person10.hello();
+
+```
