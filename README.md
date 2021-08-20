@@ -1661,3 +1661,192 @@ p11.changeName("ulala")
 Person10.hello();
 
 ```
+
+
+
+#
+## abstract class
+#
+
+> 특정 메서드를 추상화할때 abstract를 붙혀 abstract method를 만들어낸다   
+abstract method는 abstract class 안에서만 존재할 수 있기 떄문에 abstract method를   
+정의하고 싶다면 클래스도 abstract로 선언해줘야 한다  abstract method는 메서드 로직이 들어가는 {}를 붙히지 않는다    
+abstract class는 그 자체만으로 생성될 수 없고 이를 구현하는 클래스를 통해 생성이 가능하다 . 
+
+
+```ts 
+//abstract class 정의
+abstract class AbstractPerson{
+    protected _name: string ='ugo';
+    abstract setName(name:string): void;
+}
+
+//abstract class 상속
+class Person44 extends AbstractPerson{
+    setName(name: string): void {
+        this._name = name;
+    }
+}
+
+//class 생성
+const p = new Person44();
+p.setName('ugo')
+console.log(p);
+
+```
+
+
+#
+## Generic Type
+#
+
+>위의 두 메서드와 메서드 로직은 같으나 리턴타입 혹은 파라미터의 타입만 바뀌는 것이    
+반복된다면 any를 통해 어떤 타입이라도 받을 수 있도록 할 수 있지만    
+any는 얘기치 않은 문제들을 발생시킬 수 있기에 이때 any 대신 generic을 사용할 수 있다.   
+
+
+
+
+```ts
+function helloString(message: string):string{
+    return message;
+}
+
+function helloNumber(message: number):number{
+    return message;
+}
+
+//any type 사용
+
+function hello(message:any) : any {
+    return message;
+}
+
+//any type이 리턴된다
+console.log(hello('ugo').length);
+//number에는 length라는 메서드라 없기 때문에 
+//컴파일 타임에 문제가 나지 않지만 런타임에서 undefined가 리턴된다.
+console.log(hello(10).length);
+
+
+//generic type 사용
+//제네릭 타입으로 파라미터를 받으면 들어오는 데이터의 타입이 저장되어 
+//함수내에서 제네릭타입으로 지정된 곳은 해당 타입으로 사용되게 된다
+function helloGeneric<T>(message: T): T {
+    return message;
+}
+
+//T->string
+console.log(helloGeneric('helloG!'));
+//T->number
+console.log(helloGeneric(39))
+//T->boolean
+console.log(helloGeneric(true));
+
+
+------------------------------------------------------------
+
+//여러개의 제네릭 타입 사용
+
+function helloG<T, U>(message : T ,comment :U) : T {
+    console.log(comment)
+    return message ;
+}
+
+//함수 사용시 타입을 지정함
+helloG<string,number>('ugo',39);
+//타입이 추론된다.
+//가장 좁은 범위의 타입이 추론되기 떄문에 
+//타입은 36이된다. 
+helloG(36,40);
+
+
+------------------------------------------------------------
+
+//array와 tuple에서 generic 사용
+
+function helloArray<T>(message: T[]):T{
+    return message[0];
+}
+
+console.log(helloArray(['ugo','gogo']));
+
+//배열안의 타입이 여러개이기 때문에 string | number 라는 union 타입이 지정된다.
+console.log(helloArray(['hello',5]));
+
+
+//튜플형태로 데이터가 들어온다면  제네릭으로 튜플의 형태를 지정해 줘야한다.
+function helloTuple<T,K>(message:[T,K]):T{
+    return message[0];
+}
+
+helloTuple(['hello','world']);
+helloTuple(['hello',5]);
+
+------------------------------------------------------------
+
+//type 과 interface 에서의 generic 사용
+
+//type 에서 generic 사용 
+type HelloFunctionGeneric1 = <T>(message:T)=>T;
+
+const helloF1:HelloFunctionGeneric1 = <T>(message:T) : T =>{
+    return message;
+}
+
+//interface 에서 generic 사용 
+interface HelloFG{
+    <T>(message:T):T;
+}
+
+const helloF2:HelloFG = <T>(message:T) : T =>{
+    return message;
+}
+
+
+------------------------------------------------------------
+
+//class 에서의 generic 사용
+
+//클래스에서 제네릭 타입 사용시 
+//제네릭타입의 유효범위는 클래스 전체가 된다.
+
+class Person<T,K>{
+    private _name:T;
+    private _age:K;
+    constructor(name: T , age: K){
+        this._name = name;
+        this._age = age;
+    }
+}
+
+console.log(new Person('ugo',123));
+//제네릭을 지정해 줬기 떄문에 에러가 뜬다.
+//console.log(new Person<string>(123))
+
+console.log(new Person<string,number>('ugo',123))
+
+------------------------------------------------------------
+
+//generic 타입의 상속관계
+
+//T는 string | number이라는 union type을 상속받고 있다
+//즉 T는 string | number 만 가능하다.
+//사용자가 인지 할 수 있도록
+//정말 모든 타입을 받는 코드가 아니라면 
+//타입은 가장 작은 범위로 제한되는 것이 좋다 .
+class PersonExtends<T extends string | number >{
+    private _name : T ; 
+
+    constructor(name:T){
+        this._name = name;
+    }
+}
+
+new PersonExtends('ugo');
+new PersonExtends(123);
+
+//boolean은 지정된 union type에 속하지 않음으로 에러가 난다
+new PersonExtends(true);
+
+```
