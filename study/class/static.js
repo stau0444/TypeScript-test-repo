@@ -19,4 +19,6 @@ const p11 = new Person10();
 //O
 Person10.hello();
 p11.changeName("ulala");
+//Person.NAME은 인스턴스 끼리 공유되기 떄문에
+//ulala가 출력된다.
 Person10.hello();
